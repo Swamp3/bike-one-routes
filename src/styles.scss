@@ -1,6 +1,6 @@
-@import "@fontsource/nunito"; // Defaults to weight 400
-@import "@fontsource/nunito/600";
-@import "@fontsource/nunito/700";
+@use "@fontsource/nunito" as *; // Defaults to weight 400
+@use "@fontsource/nunito/600" as *;
+@use "@fontsource/nunito/700" as *;
 
 /* Global Styles */
 * {
