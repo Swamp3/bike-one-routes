@@ -1,0 +1,79 @@
+<div class="routes-container">
+  <header class="page-header">
+    <h1 class="page-title">Bike One Feierabendrunden</h1>
+    <p class="page-subtitle">
+      Welche Runde gefahren wird, entscheidet das Los vor Ort.
+    </p>
+  </header>
+
+  <div class="loading-container" *ngIf="loading()">
+    <div class="loading-spinner"></div>
+    <p>Lade Routen...</p>
+  </div>
+
+  <div class="error-container" *ngIf="error">
+    <div class="error-message">
+      <h3>Fehler beim Laden</h3>
+      <p>{{ error }}</p>
+      <button (click)="loadRoutes()" class="retry-button">
+        Erneut versuchen
+      </button>
+    </div>
+  </div>
+
+  <div class="routes-grid" *ngIf="!loading() && !error">
+    <article class="route-card" *ngFor="let route of routes">
+      <div class="route-image-container">
+        <img
+          [src]="getRouteImageUrl(route)"
+          [alt]="route.title"
+          class="route-image"
+          loading="lazy"
+        />
+        <div class="route-overlay">
+          <a
+            [href]="route.stravaUrl"
+            target="_blank"
+            rel="noopener"
+            class="strava-link"
+          >
+            <svg class="strava-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.172"
+              />
+            </svg>
+            Strava öffnen
+          </a>
+        </div>
+      </div>
+
+      <div class="route-content">
+        <h3 class="route-title">{{ route.title }}</h3>
+
+        <div class="route-stats">
+          <div class="stat">
+            <span class="stat-icon">🚴</span>
+            <span class="stat-value">{{ formatDistance(route.distance) }}</span>
+            <span class="stat-label">Distanz</span>
+          </div>
+
+          <div class="stat">
+            <span class="stat-icon">⛰️</span>
+            <span class="stat-value">{{
+              formatElevation(route.elevation)
+            }}</span>
+            <span class="stat-label">Höhenmeter</span>
+          </div>
+
+          <div class="stat">
+            <span class="stat-icon">⏱️</span>
+            <span class="stat-value">{{
+              formatTime(route.estimatedTime)
+            }}</span>
+            <span class="stat-label">Zeit</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

@@ -1,1 +1,21 @@
-/* You can add global styles to this file, and also import other style files */
+@import "@fontsource/nunito"; // Defaults to weight 400
+@import "@fontsource/nunito/600";
+@import "@fontsource/nunito/700";
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Nunito", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
