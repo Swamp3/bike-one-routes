@@ -6,12 +6,13 @@
     </p>
   </header>
 
-  <div class="loading-container" *ngIf="loading()">
+  @if (loading()) {
+  <div class="loading-container">
     <div class="loading-spinner"></div>
     <p>Lade Routen...</p>
   </div>
-
-  <div class="error-container" *ngIf="error">
+  } @if (error) {
+  <div class="error-container">
     <div class="error-message">
       <h3>Fehler beim Laden</h3>
       <p>{{ error }}</p>
@@ -20,9 +21,10 @@
       </button>
     </div>
   </div>
-
-  <div class="routes-grid" *ngIf="!loading() && !error">
-    <article class="route-card" *ngFor="let route of routes">
+  } @if (!loading() && !error) {
+  <div class="routes-grid">
+    @for (route of routes; track route.$id) {
+    <article class="route-card" (click)="stravaLink.click()">
       <div class="route-image-container">
         <img
           [src]="getRouteImageUrl(route)"
@@ -36,6 +38,7 @@
             target="_blank"
             rel="noopener"
             class="strava-link"
+            #stravaLink
           >
             <svg class="strava-icon" viewBox="0 0 24 24" fill="currentColor">
               <path
@@ -75,5 +78,7 @@
         </div>
       </div>
     </article>
+    }
   </div>
+  }
 </div>
