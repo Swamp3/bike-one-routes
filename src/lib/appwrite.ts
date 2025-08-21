@@ -34,6 +34,8 @@ export interface Route {
   stravaUrl: string;
   storageBucket: string;
   mapThumbnailId: string;
+  gpxId: string;
+  komootUrl: string;
 }
 
 /**
@@ -70,5 +72,12 @@ export async function getRoutes(): Promise<Route[]> {
  * Get image URL from storage
  */
 export function getImageUrl(bucketId: string, fileId: string): string {
+  return storage.getFileView(bucketId, fileId).toString();
+}
+
+/**
+ * Get GPX file URL from storage
+ */
+export function getGpxFileUrl(bucketId: string, fileId: string): string {
   return storage.getFileView(bucketId, fileId).toString();
 }

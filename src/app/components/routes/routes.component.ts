@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { Route, getImageUrl, getRoutes } from '../../../lib/appwrite';
+import {
+  Route,
+  getGpxFileUrl,
+  getImageUrl,
+  getRoutes,
+} from '../../../lib/appwrite';
 
 @Component({
   selector: 'app-routes',
@@ -56,5 +61,38 @@ export class RoutesComponent implements OnInit {
       return `${hours}h ${minutes}min`;
     }
     return `${minutes}min`;
+  }
+
+  openStrava(stravaUrl: string): void {
+    if (stravaUrl) {
+      window.open(stravaUrl, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  openKomoot(komootUrl: string): void {
+    if (komootUrl) {
+      window.open(komootUrl, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  async downloadGpx(route: Route): Promise<void> {
+    try {
+      const gpxUrl = await getGpxFileUrl(route.storageBucket, route.gpxId);
+      const response = await fetch(gpxUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${route.title
+        .replace(/[^a-z0-9]/gi, '_')
+        .toLowerCase()}.gpx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading GPX file:', route.title, error);
+      this.error = 'Failed to download GPX file. Please try again later.';
+    }
   }
 }

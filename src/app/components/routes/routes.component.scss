@@ -250,6 +250,76 @@ $overlay-dark: rgba(0, 0, 0, 0.7);
       }
     }
   }
+
+  .route-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid $gray-light;
+
+    .action-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      min-width: 44px;
+      height: 44px;
+
+      &.strava-button {
+        background: $secondary;
+        color: $tertiary;
+
+        &:hover {
+          background: darken($secondary, 10%);
+          transform: translateY(-2px);
+        }
+
+        .strava-icon {
+          width: 20px;
+          height: 20px;
+          filter: brightness(0) invert(1); // Makes the SVG white
+        }
+      }
+
+      &.komoot-button {
+        background: #00aa00;
+        color: $tertiary;
+
+        &:hover {
+          background: darken(#00aa00, 10%);
+          transform: translateY(-2px);
+        }
+
+        .komoot-icon {
+          width: 20px;
+          height: 20px;
+          filter: brightness(0) invert(1); // Makes the SVG white
+        }
+      }
+
+      &.gpx-button {
+        background: $primary;
+        color: $tertiary;
+        padding: 0 1rem;
+
+        &:hover {
+          background: $primary-dark;
+          transform: translateY(-2px);
+        }
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
 }
 
 // Responsive design

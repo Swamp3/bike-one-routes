@@ -2,7 +2,7 @@
   <header class="page-header">
     <h1 class="page-title">Bike One Feierabendrunden</h1>
     <p class="page-subtitle">
-      Welche Runde gefahren wird, entscheidet das Los vor Ort.
+      Welche Runde gefahren wird, entscheiden wir vor Ort.
     </p>
   </header>
 
@@ -24,7 +24,7 @@
   } @if (!loading() && !error) {
   <div class="routes-grid">
     @for (route of routes; track route.$id) {
-    <article class="route-card" (click)="stravaLink.click()">
+    <article class="route-card">
       <div class="route-image-container">
         <img
           [src]="getRouteImageUrl(route)"
@@ -32,7 +32,7 @@
           class="route-image"
           loading="lazy"
         />
-        <div class="route-overlay">
+        <!-- <div class="route-overlay">
           <a
             [href]="route.stravaUrl"
             target="_blank"
@@ -47,7 +47,7 @@
             </svg>
             Strava öffnen
           </a>
-        </div>
+        </div> -->
       </div>
 
       <div class="route-content">
@@ -75,6 +75,28 @@
             }}</span>
             <span class="stat-label">Zeit</span>
           </div>
+        </div>
+
+        <div class="route-actions">
+          <button
+            [attr.aria-label]="'Route in Strava öffnen'"
+            class="action-button strava-button"
+            (click)="openStrava(route.stravaUrl)"
+          >
+            <img src="/strava.svg" alt="Strava" class="strava-icon" />
+          </button>
+
+          <button
+            [attr.aria-label]="'Route in Komoot öffnen'"
+            class="action-button komoot-button"
+            (click)="openKomoot(route.komootUrl)"
+          >
+            <img src="/komoot.svg" alt="Komoot" class="komoot-icon" />
+          </button>
+
+          <button class="action-button gpx-button" (click)="downloadGpx(route)">
+            GPX
+          </button>
         </div>
       </div>
     </article>
