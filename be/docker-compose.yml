@@ -981,7 +981,7 @@ services:
       - /bin/bash
       - -c
       - |
-        set -e
+        set -eux
         KEYFILE_PATH="/data/keyfile/mongo-keyfile"
         INIT_FLAG="/data/db/.mongodb_initialized"
 
@@ -989,8 +989,9 @@ services:
         if [ ! -f "$KEYFILE_PATH" ]; then
           echo "Generating random MongoDB keyfile..."
           mkdir -p /data/keyfile
-          # mongo image may not include openssl; use /dev/urandom + base64 instead
-          head -c 756 /dev/urandom | base64 > "$KEYFILE_PATH"
+          # Keep keyfile ASCII (Mongo requires text keyfile).
+          # Avoid openssl/base64 dependency.
+          tr -dc 'A-Za-z0-9' </dev/urandom | head -c 756 > "$KEYFILE_PATH"
         fi
         chmod 400 "$KEYFILE_PATH"
         chown mongodb:mongodb "$KEYFILE_PATH" 2>/dev/null || chown 999:999 "$KEYFILE_PATH"
