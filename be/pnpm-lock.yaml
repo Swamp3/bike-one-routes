@@ -1,0 +1,29 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      node-appwrite:
+        specifier: ^19.1.0
+        version: 19.1.0
+
+packages:
+
+  node-appwrite@19.1.0:
+    resolution: {integrity: sha512-fq8IGvukZX73Zf70p61sKoACEB3d+vwv47GklMVQAODXJJ1vZqszJF9ljCzCFVKuhX/WiImcDKSYXFF9kci+wg==}
+
+  node-fetch-native-with-agent@1.7.2:
+    resolution: {integrity: sha512-5MaOOCuJEvcckoz7/tjdx1M6OusOY6Xc5f459IaruGStWnKzlI1qpNgaAwmn4LmFYcsSlj+jBMk84wmmRxfk5g==}
+
+snapshots:
+
+  node-appwrite@19.1.0:
+    dependencies:
+      node-fetch-native-with-agent: 1.7.2
+
+  node-fetch-native-with-agent@1.7.2: {}

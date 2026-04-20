@@ -12,9 +12,8 @@ export const databases = new Databases(client);
 export const storage = new Storage(client);
 export { ID } from 'appwrite';
 
-// Database and collection constants
-export const DATABASE_ID = '6854f4e1002a5444cd36';
-export const ROUTES_COLLECTION = '6854f508002dfc11534b';
+export const DATABASE_ID = environment.appwrite.databaseId;
+export const ROUTES_COLLECTION = environment.appwrite.routesCollectionId;
 
 /**
  * Interface for route data structure based on the Appwrite response

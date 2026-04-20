@@ -1,0 +1,11 @@
+{
+  "name": "bike-one-routes-be",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "migrate:documents": "node migrations/migrate-documents.mjs"
+  },
+  "dependencies": {
+    "node-appwrite": "^19.1.0"
+  }
+}

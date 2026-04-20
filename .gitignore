@@ -1,13 +1,19 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+.env
+/be/.env
+
 # Compiled output
 /dist
+/fe/dist
 /tmp
 /out-tsc
 /bazel-out
 
 # Node
 /node_modules
+/fe/node_modules
+/be/node_modules
 npm-debug.log
 yarn-error.log
 
@@ -30,6 +36,7 @@ yarn-error.log
 
 # Miscellaneous
 /.angular/cache
+/fe/.angular/cache
 .sass-cache/
 /connect.lock
 /coverage
