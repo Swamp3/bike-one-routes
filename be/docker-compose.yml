@@ -989,7 +989,8 @@ services:
         if [ ! -f "$KEYFILE_PATH" ]; then
           echo "Generating random MongoDB keyfile..."
           mkdir -p /data/keyfile
-          openssl rand -base64 756 > "$KEYFILE_PATH"
+          # mongo image may not include openssl; use /dev/urandom + base64 instead
+          head -c 756 /dev/urandom | base64 > "$KEYFILE_PATH"
         fi
         chmod 400 "$KEYFILE_PATH"
         chown mongodb:mongodb "$KEYFILE_PATH" 2>/dev/null || chown 999:999 "$KEYFILE_PATH"
