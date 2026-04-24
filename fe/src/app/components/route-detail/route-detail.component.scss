@@ -121,14 +121,33 @@ $shadow-medium: rgba(0, 0, 0, 0.15);
 .hero {
   position: relative;
   width: 100%;
-  height: 360px;
+  height: 420px;
   overflow: hidden;
   background: $gray-light;
 
-  .hero-image {
+  .hero-map {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+  }
+
+  .map-error {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    color: $error-red;
+    padding: 0.5rem 0.875rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px $shadow-light;
+    z-index: 500;
+    pointer-events: none;
+    white-space: nowrap;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

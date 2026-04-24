@@ -29,11 +29,10 @@
   } @else { @if (route(); as r) {
   <article class="route-detail">
     <div class="hero">
-      <img
-        [src]="getRouteImageUrl(r)"
-        [alt]="r.title"
-        class="hero-image"
-      />
+      <div #mapEl class="hero-map" role="img" [attr.aria-label]="'Karte mit GPX-Track für ' + r.title"></div>
+      @if (mapError(); as me) {
+      <div class="map-error">{{ me }}</div>
+      }
     </div>
 
     <header class="detail-header">
