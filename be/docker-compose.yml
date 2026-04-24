@@ -19,7 +19,8 @@ services:
       - --entrypoints.appwrite_websecure.address=:443
     restart: unless-stopped
     ports:
-      - ${APPWRITE_HTTP_PORT:-8082}:80
+      - 80:80
+      - 443:443
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - appwrite-config:/storage/config:ro
@@ -63,7 +64,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     #      - clamav
     environment:
@@ -102,6 +103,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_SMTP_HOST
       - _APP_SMTP_PORT
       - _APP_SMTP_SECURE
@@ -172,6 +174,7 @@ services:
       - _APP_MIGRATIONS_FIREBASE_CLIENT_ID
       - _APP_MIGRATIONS_FIREBASE_CLIENT_SECRET
       - _APP_ASSISTANT_OPENAI_API_KEY
+      - _APP_MIGRATION_HOST
   appwrite-console:
     <<: *x-logging
     container_name: appwrite-console
@@ -219,7 +222,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -237,6 +240,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_USAGE_STATS
       - _APP_LOGGING_CONFIG
 
@@ -251,7 +255,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -267,6 +271,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_LOGGING_CONFIG
 
   appwrite-worker-webhooks:
@@ -280,7 +285,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -294,6 +299,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_REDIS_HOST
       - _APP_REDIS_PORT
       - _APP_REDIS_USER
@@ -311,7 +317,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     volumes:
       - appwrite-uploads:/storage/uploads:rw
@@ -334,6 +340,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_STORAGE_DEVICE
       - _APP_STORAGE_S3_ACCESS_KEY
       - _APP_STORAGE_S3_SECRET
@@ -377,7 +384,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -393,6 +400,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_LOGGING_CONFIG
 
   appwrite-worker-builds:
@@ -406,7 +414,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     volumes:
       - appwrite-functions:/storage/functions:rw
@@ -429,6 +437,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_LOGGING_CONFIG
       - _APP_VCS_GITHUB_APP_NAME
       - _APP_VCS_GITHUB_PRIVATE_KEY
@@ -477,7 +486,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     volumes:
       - appwrite-config:/storage/config:rw
@@ -504,6 +513,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_LOGGING_CONFIG
 
   appwrite-worker-functions:
@@ -517,7 +527,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
       openruntimes-executor:
         condition: service_started
@@ -537,6 +547,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_FUNCTIONS_TIMEOUT
       - _APP_SITES_TIMEOUT
       - _APP_COMPUTE_BUILD_TIMEOUT
@@ -560,7 +571,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -574,6 +585,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_REDIS_HOST
       - _APP_REDIS_PORT
       - _APP_REDIS_USER
@@ -600,7 +612,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -616,6 +628,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_LOGGING_CONFIG
       - _APP_SMS_FROM
       - _APP_SMS_PROVIDER
@@ -653,7 +666,7 @@ services:
     volumes:
       - appwrite-imports:/storage/imports:rw
     depends_on:
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -676,9 +689,11 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_LOGGING_CONFIG
       - _APP_MIGRATIONS_FIREBASE_CLIENT_ID
       - _APP_MIGRATIONS_FIREBASE_CLIENT_SECRET
+      - _APP_MIGRATION_HOST
 
   appwrite-task-maintenance:
     image: appwrite/appwrite:1.9.0
@@ -691,7 +706,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -714,6 +729,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_MAINTENANCE_INTERVAL
       - _APP_MAINTENANCE_RETENTION_EXECUTION
       - _APP_MAINTENANCE_RETENTION_CACHE
@@ -734,7 +750,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -746,6 +762,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_REDIS_HOST
       - _APP_REDIS_PORT
       - _APP_REDIS_USER
@@ -766,7 +783,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -778,6 +795,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_REDIS_HOST
       - _APP_REDIS_PORT
       - _APP_REDIS_USER
@@ -797,7 +815,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
+      mariadb:
         condition: service_healthy
     environment:
       - _APP_ENV
@@ -809,6 +827,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
       - _APP_REDIS_HOST
       - _APP_REDIS_PORT
       - _APP_REDIS_USER
@@ -826,7 +845,7 @@ services:
     networks:
       - appwrite
     depends_on:
-      mongodb:
+      mariadb:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -844,6 +863,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
 
   appwrite-task-scheduler-executions:
     image: appwrite/appwrite:1.9.0
@@ -854,7 +874,7 @@ services:
     networks:
       - appwrite
     depends_on:
-      mongodb:
+      mariadb:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -872,6 +892,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
 
   appwrite-task-scheduler-messages:
     image: appwrite/appwrite:1.9.0
@@ -882,7 +903,7 @@ services:
     networks:
       - appwrite
     depends_on:
-      mongodb:
+      mariadb:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -900,6 +921,7 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
+      - _APP_DB_ADAPTER
 
   appwrite-browser:
     image: appwrite/browser:0.3.2
@@ -961,77 +983,27 @@ services:
       - OPR_EXECUTOR_STORAGE_WASABI_REGION=$_APP_STORAGE_WASABI_REGION
       - OPR_EXECUTOR_STORAGE_WASABI_BUCKET=$_APP_STORAGE_WASABI_BUCKET
 
-  mongodb:
-    image: mongo:8.2.5
-    container_name: appwrite-mongodb
-    <<: *x-logging
+  mariadb:
+    image: mariadb:10.11
+    container_name: appwrite-mariadb
     restart: unless-stopped
     networks:
       - appwrite
     volumes:
-      - appwrite-mongodb:/data/db
-      - appwrite-mongodb-keyfile:/data/keyfile
+      - appwrite-mariadb:/var/lib/mysql:rw
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=${_APP_DB_ROOT_PASS}
-      - MONGO_INITDB_DATABASE=${_APP_DB_SCHEMA}
-      - MONGO_INITDB_USERNAME=${_APP_DB_USER}
-      - MONGO_INITDB_PASSWORD=${_APP_DB_PASS}
-    entrypoint:
-      - /bin/bash
-      - -c
-      - |
-        set -eux
-        KEYFILE_PATH="/data/keyfile/mongo-keyfile"
-        INIT_FLAG="/data/db/.mongodb_initialized"
-
-        # Generate keyfile if it doesn't exist
-        if [ ! -f "$KEYFILE_PATH" ]; then
-          echo "Generating random MongoDB keyfile..."
-          mkdir -p /data/keyfile
-          # Keep keyfile ASCII (Mongo requires text keyfile).
-          # Avoid openssl/base64 dependency.
-          tr -dc 'A-Za-z0-9' </dev/urandom | head -c 756 > "$KEYFILE_PATH"
-        fi
-        chmod 400 "$KEYFILE_PATH"
-        chown mongodb:mongodb "$KEYFILE_PATH" 2>/dev/null || chown 999:999 "$KEYFILE_PATH"
-
-        # If not initialized, start without auth first to set up replica set and users
-        if [ ! -f "$INIT_FLAG" ]; then
-          echo "First-time initialization: starting MongoDB without auth..."
-          mongod --replSet rs0 --bind_ip_all --fork --logpath /var/log/mongodb/mongod.log --dbpath /data/db
-
-          echo "Waiting for MongoDB to start..."
-          sleep 5
-
-          echo "Initializing replica set..."
-          mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'mongodb:27017'}]})"
-
-          echo "Waiting for replica set to initialize..."
-          sleep 5
-
-          echo "Creating root user..."
-          mongosh admin --eval "db.createUser({user: '$MONGO_INITDB_ROOT_USERNAME', pwd: '$MONGO_INITDB_ROOT_PASSWORD', roles: ['root']})"
-
-          echo "Creating application user..."
-          mongosh admin --eval "db.createUser({user: '$MONGO_INITDB_USERNAME', pwd: '$MONGO_INITDB_PASSWORD', roles: [{role: 'readWrite', db: '$MONGO_INITDB_DATABASE'}]})"
-
-          echo "Shutting down MongoDB..."
-          mongod --dbpath /data/db --shutdown
-
-          touch "$INIT_FLAG"
-          echo "Initialization complete."
-        fi
-
-        echo "Starting MongoDB with authentication..."
-        exec mongod --replSet rs0 --bind_ip_all --auth --keyFile "$KEYFILE_PATH"
+      - MYSQL_ROOT_PASSWORD=${_APP_DB_ROOT_PASS}
+      - MYSQL_DATABASE=${_APP_DB_SCHEMA}
+      - MYSQL_USER=${_APP_DB_USER}
+      - MYSQL_PASSWORD=${_APP_DB_PASS}
+      - MARIADB_AUTO_UPGRADE=1
+    command: "mysqld --innodb-flush-method=fsync"
     healthcheck:
-      test: |
-        mongosh -u root -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --quiet --eval "rs.status().ok" | grep -q 1
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
       interval: 10s
       timeout: 10s
       retries: 10
-      start_period: 60s
+      start_period: 30s
 
   redis:
     image: redis:7.4.7-alpine
@@ -1069,8 +1041,7 @@ networks:
     name: runtimes
 
 volumes:
-  appwrite-mongodb:
-  appwrite-mongodb-keyfile:
+  appwrite-mariadb:
   appwrite-redis:
   appwrite-cache:
   appwrite-uploads:

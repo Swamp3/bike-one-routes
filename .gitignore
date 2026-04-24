@@ -10,10 +10,6 @@
 /out-tsc
 /bazel-out
 
-/be/.env
-/be/.env.appwrite
-/be/.env.supabase
-
 # Node
 /node_modules
 /fe/node_modules
@@ -47,6 +43,7 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+ISSUES.md
 
 # System files
 .DS_Store

@@ -6,11 +6,8 @@ import { inject as injectVercelAnalytics } from '@vercel/analytics';
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss',
 })
 export class App implements OnInit {
-  protected title = 'bike-one-routes';
-
   ngOnInit(): void {
     injectVercelAnalytics();
   }

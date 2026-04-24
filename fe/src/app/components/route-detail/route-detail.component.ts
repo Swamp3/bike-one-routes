@@ -1,6 +1,8 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   OnDestroy,
   OnInit,
@@ -8,59 +10,73 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Route, getGpxUrl, getRouteByShortId } from '../../../lib/appwrite';
 import {
-  Route,
-  getPublicUrl,
-  getRouteByShortId,
-} from '../../../lib/supabase';
+  formatDistance,
+  formatElevation,
+  formatTime,
+  gpxFileName,
+} from '../../../lib/route-format';
 
 type LatLng = [number, number];
 
 @Component({
   selector: 'app-route-detail',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './route-detail.component.html',
   styleUrls: ['./route-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RouteDetailComponent implements OnInit, OnDestroy {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly host: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly route = signal<Route | null>(null);
   readonly loading = signal(true);
   readonly notFound = signal(false);
   readonly error = signal<string | null>(null);
   readonly mapError = signal<string | null>(null);
-  shortId: number | null = null;
 
-  private mapContainer: HTMLDivElement | null = null;
+  readonly formatDistance = formatDistance;
+  readonly formatElevation = formatElevation;
+  readonly formatTime = formatTime;
+
+  private lastShortId: number | null = null;
+
+  private static readonly MAP_CONTAINER_MAX_ATTEMPTS = 60; // ~1 s at 60 fps
+
+  private mapContainerAttempts = 0;
   private map: import('leaflet').Map | null = null;
   private trackLayer: import('leaflet').Polyline | null = null;
   private arrowLayer: import('leaflet').PolylineDecorator | null = null;
   private arrowOutlineLayer: import('leaflet').PolylineDecorator | null = null;
 
   ngOnInit() {
-    this.activatedRoute.paramMap.subscribe((params) => {
-      const raw = params.get('shortId');
-      const parsed = raw === null ? NaN : Number(raw);
-      if (!Number.isFinite(parsed) || !Number.isInteger(parsed)) {
-        this.notFound.set(true);
-        this.loading.set(false);
-        return;
-      }
-      this.shortId = parsed;
-      this.loadRoute(parsed);
-    });
+    this.activatedRoute.paramMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const raw = params.get('id');
+        const parsed = raw === null ? NaN : Number(raw);
+        if (!Number.isInteger(parsed)) {
+          this.lastShortId = null;
+          this.notFound.set(true);
+          this.loading.set(false);
+          return;
+        }
+        this.lastShortId = parsed;
+        void this.loadRoute(parsed);
+      });
   }
 
   ngOnDestroy() {
     this.destroyMap();
   }
 
-  async loadRoute(shortId: number) {
+  async loadRoute(shortId: number): Promise<void> {
     try {
       this.loading.set(true);
       this.error.set(null);
@@ -83,6 +99,29 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  private ensureLeafletStylesheet(): Promise<void> {
+    if (!this.isBrowser) return Promise.resolve();
+    const existing = document.querySelector<HTMLLinkElement>(
+      'link[data-leaflet]'
+    );
+    if (existing) {
+      return existing.sheet
+        ? Promise.resolve()
+        : new Promise((resolve) => existing.addEventListener('load', () => resolve(), { once: true }));
+    }
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.dataset['leaflet'] = '';
+    // Copied as a static asset (see angular.json > assets > leaflet.css).
+    link.href = 'assets/leaflet.css';
+    const ready = new Promise<void>((resolve) => {
+      link.addEventListener('load', () => resolve(), { once: true });
+      link.addEventListener('error', () => resolve(), { once: true });
+    });
+    document.head.appendChild(link);
+    return ready;
+  }
+
   private tryRenderMap(): void {
     if (!this.isBrowser || this.map) return;
     const r = this.route();
@@ -91,72 +130,32 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
       'div.hero-map'
     ) as HTMLDivElement | null;
     if (!container) {
-      requestAnimationFrame(() => this.tryRenderMap());
+      if (
+        this.mapContainerAttempts++ < RouteDetailComponent.MAP_CONTAINER_MAX_ATTEMPTS
+      ) {
+        requestAnimationFrame(() => this.tryRenderMap());
+      }
       return;
     }
-    this.mapContainer = container;
+    this.mapContainerAttempts = 0;
     void this.renderMap(r, container);
   }
 
-  retry() {
-    if (this.shortId !== null) {
-      this.loadRoute(this.shortId);
-    }
+  retry(): void {
+    if (this.lastShortId !== null) void this.loadRoute(this.lastShortId);
   }
 
-  formatDistance(distance: number): string {
-    return `${distance.toFixed(1)} km`;
-  }
-
-  formatElevation(elevation: number): string {
-    return `${elevation}m`;
-  }
-
-  formatTime(timeInMilliseconds: number): string {
-    const timeInMinutes = Math.round(timeInMilliseconds / 60000);
-    const hours = Math.floor(timeInMinutes / 60);
-    const minutes = timeInMinutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${minutes}min`;
-    }
-    return `${minutes}min`;
-  }
-
-  openStrava(stravaUrl: string | null): void {
-    if (stravaUrl) {
-      window.open(stravaUrl, '_blank', 'noopener,noreferrer');
-    }
-  }
-
-  openKomoot(komootUrl: string | null): void {
-    if (komootUrl) {
-      window.open(komootUrl, '_blank', 'noopener,noreferrer');
-    }
-  }
-
-  async downloadGpx(route: Route): Promise<void> {
-    if (!route.gpx_path) {
+  downloadGpx(route: Route): void {
+    const gpxUrl = getGpxUrl(route);
+    if (!gpxUrl) {
       this.error.set('Keine GPX-Datei verfügbar.');
       return;
     }
-    try {
-      const gpxUrl = getPublicUrl(route.gpx_path);
-      const response = await fetch(gpxUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${route.title
-        .replace(/[^a-z0-9]/gi, '_')
-        .toLowerCase()}.gpx`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Error downloading GPX file:', route.title, err);
-      this.error.set('GPX-Download fehlgeschlagen.');
-    }
+    const a = document.createElement('a');
+    a.href = gpxUrl;
+    a.download = gpxFileName(route.title);
+    a.rel = 'noopener';
+    a.click();
   }
 
   async copyShareLink(): Promise<void> {
@@ -177,6 +176,7 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
     this.mapError.set(null);
 
     try {
+      await this.ensureLeafletStylesheet();
       const Lmod = await import('leaflet');
       const L = (Lmod as unknown as { default?: typeof Lmod }).default ?? Lmod;
       (window as unknown as { L: typeof L }).L = L;
@@ -186,6 +186,7 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
 
       const map = L.map(container, {
         scrollWheelZoom: false,
+        preferCanvas: true,
       });
       this.map = map;
 
@@ -195,13 +196,13 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      if (!route.gpx_path) {
+      const gpxUrl = getGpxUrl(route);
+      if (!gpxUrl) {
         map.setView([51.1657, 10.4515], 6);
         this.mapError.set('Keine GPX-Datei für diese Route verfügbar.');
         return;
       }
 
-      const gpxUrl = getPublicUrl(route.gpx_path);
       const response = await fetch(gpxUrl);
       if (!response.ok) {
         throw new Error(`GPX request failed: ${response.status}`);
