@@ -10,10 +10,6 @@
 /out-tsc
 /bazel-out
 
-/be/.env
-/be/.env.appwrite
-/be/.env.supabase
-
 # Node
 /node_modules
 /fe/node_modules
