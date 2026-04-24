@@ -1,15 +1,6 @@
 import { Client, Models, Query, Storage, TablesDB } from 'appwrite';
 import { environment } from '../environments/environment';
 
-// IDs of the single database + table + default bucket that hold routes.
-// These match the Appwrite project that was migrated from Appwrite Cloud.
-// (Appwrite 1.8+ renamed "collection" to "table" and "document" to "row";
-// the underlying IDs are unchanged.)
-export const APPWRITE_DATABASE_ID = '6854f4e1002a5444cd36';
-export const APPWRITE_ROUTES_TABLE_ID = '6854f508002dfc11534b';
-// Fallback bucket when a row has no explicit `storageBucket` attribute.
-export const APPWRITE_DEFAULT_BUCKET_ID = 'routes';
-
 export const appwrite = new Client()
   .setEndpoint(environment.appwriteEndpoint)
   .setProject(environment.appwriteProjectId);
@@ -35,14 +26,14 @@ export interface Route extends Models.Row {
 }
 
 function bucketOf(route: Route): string {
-  return route.storageBucket || APPWRITE_DEFAULT_BUCKET_ID;
+  return route.storageBucket || environment.appwriteDefaultBucketId;
 }
 
 /** Fetch all routes, oldest first. */
 export async function getRoutes(): Promise<Route[]> {
   const res = await tablesDB.listRows<Route>({
-    databaseId: APPWRITE_DATABASE_ID,
-    tableId: APPWRITE_ROUTES_TABLE_ID,
+    databaseId: environment.appwriteDatabaseId,
+    tableId: environment.appwriteRoutesTableId,
     queries: [Query.orderAsc('$createdAt'), Query.limit(100)],
   });
   return res.rows;
@@ -52,8 +43,8 @@ export async function getRoutes(): Promise<Route[]> {
 export async function getRouteById(id: string): Promise<Route | null> {
   try {
     return await tablesDB.getRow<Route>({
-      databaseId: APPWRITE_DATABASE_ID,
-      tableId: APPWRITE_ROUTES_TABLE_ID,
+      databaseId: environment.appwriteDatabaseId,
+      tableId: environment.appwriteRoutesTableId,
       rowId: id,
     });
   } catch (err) {
@@ -67,8 +58,8 @@ export async function getRouteByShortId(
   shortId: number
 ): Promise<Route | null> {
   const res = await tablesDB.listRows<Route>({
-    databaseId: APPWRITE_DATABASE_ID,
-    tableId: APPWRITE_ROUTES_TABLE_ID,
+    databaseId: environment.appwriteDatabaseId,
+    tableId: environment.appwriteRoutesTableId,
     queries: [Query.equal('shortId', shortId), Query.limit(1)],
   });
   return res.rows[0] ?? null;

@@ -1,36 +1,48 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import {
-  Route,
-  getGpxUrl,
-  getImageUrl,
-  getRoutes,
-} from '../../../lib/appwrite';
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Route, getGpxUrl, getImageUrl, getRoutes } from '../../../lib/appwrite';
+import {
+  formatDistance,
+  formatElevation,
+  formatTime,
+  gpxFileName,
+} from '../../../lib/route-format';
 
 @Component({
   selector: 'app-routes',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './routes.component.html',
   styleUrls: ['./routes.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoutesComponent implements OnInit {
-  routes: Route[] = [];
-  loading = signal(true);
-  error: string | null = null;
+  private static readonly PLACEHOLDER_IMAGE = 'route-placeholder.svg';
+
+  readonly routes = signal<Route[]>([]);
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
+
+  readonly formatDistance = formatDistance;
+  readonly formatElevation = formatElevation;
+  readonly formatTime = formatTime;
 
   ngOnInit() {
-    this.loadRoutes();
+    void this.loadRoutes();
   }
 
-  async loadRoutes() {
+  async loadRoutes(): Promise<void> {
     try {
       this.loading.set(true);
-      this.routes = await getRoutes();
-    } catch (error) {
-      this.error = 'Failed to load routes. Please try again later.';
-      console.error('Error loading routes:', error);
+      this.error.set(null);
+      this.routes.set(await getRoutes());
+    } catch (err) {
+      this.error.set('Failed to load routes. Please try again later.');
+      console.error('Error loading routes:', err);
     } finally {
       this.loading.set(false);
     }
@@ -38,69 +50,23 @@ export class RoutesComponent implements OnInit {
 
   getRouteImageUrl(route: Route): string {
     try {
-      const url = getImageUrl(route);
-      if (!url) {
-        return 'https://via.placeholder.com/400x200?text=Image+Not+Available';
-      }
-      return url;
-    } catch (error) {
-      console.error('Error loading image for route:', route.title, error);
-      return 'https://via.placeholder.com/400x200?text=Image+Not+Available';
+      return getImageUrl(route) ?? RoutesComponent.PLACEHOLDER_IMAGE;
+    } catch (err) {
+      console.error('Error loading image for route:', route.title, err);
+      return RoutesComponent.PLACEHOLDER_IMAGE;
     }
   }
 
-  formatDistance(distance: number): string {
-    return `${distance.toFixed(1)} km`;
-  }
-
-  formatElevation(elevation: number): string {
-    return `${elevation}m`;
-  }
-
-  formatTime(timeInMilliseconds: number): string {
-    const timeInMinutes = Math.round(timeInMilliseconds / 60000);
-    const hours = Math.floor(timeInMinutes / 60);
-    const minutes = timeInMinutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${minutes}min`;
-    }
-    return `${minutes}min`;
-  }
-
-  openStrava(stravaUrl: string | null | undefined): void {
-    if (stravaUrl) {
-      window.open(stravaUrl, '_blank', 'noopener,noreferrer');
-    }
-  }
-
-  openKomoot(komootUrl: string | null | undefined): void {
-    if (komootUrl) {
-      window.open(komootUrl, '_blank', 'noopener,noreferrer');
-    }
-  }
-
-  async downloadGpx(route: Route): Promise<void> {
+  downloadGpx(route: Route): void {
     const gpxUrl = getGpxUrl(route);
     if (!gpxUrl) {
-      this.error = 'No GPX file available for this route.';
+      this.error.set('No GPX file available for this route.');
       return;
     }
-    try {
-      const response = await fetch(gpxUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${route.title
-        .replace(/[^a-z0-9]/gi, '_')
-        .toLowerCase()}.gpx`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Error downloading GPX file:', route.title, error);
-      this.error = 'Failed to download GPX file. Please try again later.';
-    }
+    const a = document.createElement('a');
+    a.href = gpxUrl;
+    a.download = gpxFileName(route.title);
+    a.rel = 'noopener';
+    a.click();
   }
 }

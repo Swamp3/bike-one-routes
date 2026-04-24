@@ -67,27 +67,44 @@
     </section>
 
     <section class="detail-actions">
-      <button
-        [attr.aria-label]="'Route in Strava öffnen'"
+      @if (r.stravaUrl) {
+      <a
+        [href]="r.stravaUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Route in Strava öffnen"
         class="action-button strava-button"
-        [disabled]="!r.stravaUrl"
-        (click)="openStrava(r.stravaUrl)"
       >
         <img src="/strava.svg" alt="" class="brand-icon" />
         Strava öffnen
+      </a>
+      } @else {
+      <button type="button" class="action-button strava-button" disabled>
+        <img src="/strava.svg" alt="" class="brand-icon" />
+        Strava öffnen
       </button>
+      }
 
-      <button
-        [attr.aria-label]="'Route in Komoot öffnen'"
+      @if (r.komootUrl) {
+      <a
+        [href]="r.komootUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Route in Komoot öffnen"
         class="action-button komoot-button"
-        [disabled]="!r.komootUrl"
-        (click)="openKomoot(r.komootUrl)"
       >
         <img src="/komoot.svg" alt="" class="brand-icon" />
         Komoot öffnen
+      </a>
+      } @else {
+      <button type="button" class="action-button komoot-button" disabled>
+        <img src="/komoot.svg" alt="" class="brand-icon" />
+        Komoot öffnen
       </button>
+      }
 
       <button
+        type="button"
         class="action-button gpx-button"
         [disabled]="!r.gpxId"
         (click)="downloadGpx(r)"

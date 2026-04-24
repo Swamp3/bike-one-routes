@@ -15,7 +15,6 @@ A modern web application for managing and displaying cycling routes for "Bike On
 - **Random Selection**: Routes are randomly selected on-site to add excitement
 - **Strava / Komoot**: Direct links for detailed navigation
 - **Responsive Design**: Works on desktop and mobile
-- **Server-Side Rendering**: Angular SSR
 - **Typography**: Nunito font family
 
 ## Tech stack
@@ -44,13 +43,14 @@ Open `http://localhost:4200/`.
 
 Update [`fe/src/environments/environment.ts`](fe/src/environments/environment.ts) (and `environment.prod.ts` for production builds) with your Appwrite **endpoint** and **project ID**. Database and routes table IDs live in [`fe/src/lib/appwrite.ts`](fe/src/lib/appwrite.ts).
 
-### Build & SSR
+### Build
 
 ```bash
 cd fe
 pnpm run build
-pnpm run serve:ssr:bike-one-routes
 ```
+
+Output ends up in `fe/dist/bike-one-routes/browser/` and is deployed as a static SPA on Vercel (see [`fe/vercel.json`](fe/vercel.json)).
 
 ### Tests
 

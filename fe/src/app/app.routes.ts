@@ -1,13 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  {
-    path: '',
-    loadComponent: () =>
-      import('./components/routes/routes.component').then(
-        (m) => m.RoutesComponent
-      ),
-  },
+  { path: '', redirectTo: 'routes', pathMatch: 'full' },
   {
     path: 'routes',
     loadComponent: () =>
@@ -22,4 +16,5 @@ export const routes: Routes = [
         (m) => m.RouteDetailComponent
       ),
   },
+  { path: '**', redirectTo: 'routes' },
 ];

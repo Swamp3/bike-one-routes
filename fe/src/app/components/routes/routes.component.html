@@ -11,19 +11,19 @@
     <div class="loading-spinner"></div>
     <p>Lade Routen...</p>
   </div>
-  } @if (error) {
+  } @else if (error()) {
   <div class="error-container">
     <div class="error-message">
       <h3>Fehler beim Laden</h3>
-      <p>{{ error }}</p>
-      <button (click)="loadRoutes()" class="retry-button">
+      <p>{{ error() }}</p>
+      <button type="button" (click)="loadRoutes()" class="retry-button">
         Erneut versuchen
       </button>
     </div>
   </div>
-  } @if (!loading() && !error) {
+  } @else {
   <div class="routes-grid">
-    @for (route of routes; track route.$id) {
+    @for (route of routes(); track route.$id) {
     <article class="route-card">
       <a
         [routerLink]="['/routes', route.shortId]"
@@ -71,27 +71,37 @@
       </a>
 
       <div class="route-actions">
-        <button
-          [attr.aria-label]="'Route in Strava öffnen'"
+        @if (route.stravaUrl) {
+        <a
+          [href]="route.stravaUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Route in Strava öffnen"
           class="action-button strava-button"
-          (click)="openStrava(route.stravaUrl)"
         >
           <img src="/strava.svg" alt="Strava" class="strava-icon" />
-        </button>
+        </a>
+        }
 
-        <button
-          [attr.aria-label]="'Route in Komoot öffnen'"
+        @if (route.komootUrl) {
+        <a
+          [href]="route.komootUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Route in Komoot öffnen"
           class="action-button komoot-button"
-          (click)="openKomoot(route.komootUrl)"
         >
           <img src="/komoot.svg" alt="Komoot" class="komoot-icon" />
-        </button>
+        </a>
+        }
 
-        <button class="action-button gpx-button" (click)="downloadGpx(route)">
+        <button type="button" class="action-button gpx-button" (click)="downloadGpx(route)">
           GPX
         </button>
       </div>
     </article>
+    } @empty {
+    <p class="empty-state">Keine Routen gefunden.</p>
     }
   </div>
   }
