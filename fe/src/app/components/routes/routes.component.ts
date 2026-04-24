@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, PendingTasks, inject, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Route, getPublicUrl, getRoutes } from '../../../lib/supabase';
 
@@ -11,16 +11,12 @@ import { Route, getPublicUrl, getRoutes } from '../../../lib/supabase';
   styleUrls: ['./routes.component.scss'],
 })
 export class RoutesComponent implements OnInit {
-  private readonly pendingTasks = inject(PendingTasks);
-
   routes: Route[] = [];
   loading = signal(true);
   error: string | null = null;
 
   ngOnInit() {
-    // Wrap in PendingTasks so SSR/prerender awaits the fetch and serializes
-    // the populated list instead of the loading spinner.
-    this.pendingTasks.run(() => this.loadRoutes());
+    this.loadRoutes();
   }
 
   async loadRoutes() {

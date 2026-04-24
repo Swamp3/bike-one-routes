@@ -6,8 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:bike-one-routes": "node dist/bike-one-routes/server/server.mjs"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
@@ -16,12 +15,9 @@
     "@angular/core": "^20.0.0",
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
-    "@angular/platform-server": "^20.0.0",
     "@angular/router": "^20.0.0",
-    "@angular/ssr": "^20.0.3",
     "@fontsource/nunito": "^5.2.6",
     "@supabase/supabase-js": "^2.104.1",
-    "express": "^5.1.0",
     "leaflet": "^1.9.4",
     "leaflet-polylinedecorator": "^1.6.0",
     "rxjs": "~7.8.0",
@@ -31,7 +27,6 @@
     "@angular/build": "^20.0.3",
     "@angular/cli": "^20.0.3",
     "@angular/compiler-cli": "^20.0.0",
-    "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20.17.19",

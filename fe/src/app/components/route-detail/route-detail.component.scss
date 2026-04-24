@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $primary: #0c2340;
 $primary-dark: #081a2f;
 $secondary: #fa4616;
@@ -256,7 +258,7 @@ $shadow-medium: rgba(0, 0, 0, 0.15);
       background: $secondary;
 
       &:hover:not(:disabled) {
-        background: darken($secondary, 10%);
+        background: color.adjust($secondary, $lightness: -10%);
         transform: translateY(-2px);
       }
     }
@@ -265,7 +267,7 @@ $shadow-medium: rgba(0, 0, 0, 0.15);
       background: #00aa00;
 
       &:hover:not(:disabled) {
-        background: darken(#00aa00, 10%);
+        background: color.adjust(#00aa00, $lightness: -10%);
         transform: translateY(-2px);
       }
     }

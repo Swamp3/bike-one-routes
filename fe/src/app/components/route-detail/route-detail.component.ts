@@ -5,7 +5,6 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
-  PendingTasks,
   inject,
   signal,
 } from '@angular/core';
@@ -29,7 +28,6 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly host: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  private readonly pendingTasks = inject(PendingTasks);
 
   readonly route = signal<Route | null>(null);
   readonly loading = signal(true);
@@ -54,7 +52,7 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
         return;
       }
       this.shortId = parsed;
-      this.pendingTasks.run(() => this.loadRoute(parsed));
+      this.loadRoute(parsed);
     });
   }
 
