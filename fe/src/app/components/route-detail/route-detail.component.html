@@ -61,7 +61,7 @@
       </div>
       <div class="stat">
         <span class="stat-icon">⏱️</span>
-        <span class="stat-value">{{ formatTime(r.estimated_time) }}</span>
+        <span class="stat-value">{{ formatTime(r.estimatedTime) }}</span>
         <span class="stat-label">Zeit</span>
       </div>
     </section>
@@ -70,8 +70,8 @@
       <button
         [attr.aria-label]="'Route in Strava öffnen'"
         class="action-button strava-button"
-        [disabled]="!r.strava_url"
-        (click)="openStrava(r.strava_url)"
+        [disabled]="!r.stravaUrl"
+        (click)="openStrava(r.stravaUrl)"
       >
         <img src="/strava.svg" alt="" class="brand-icon" />
         Strava öffnen
@@ -80,8 +80,8 @@
       <button
         [attr.aria-label]="'Route in Komoot öffnen'"
         class="action-button komoot-button"
-        [disabled]="!r.komoot_url"
-        (click)="openKomoot(r.komoot_url)"
+        [disabled]="!r.komootUrl"
+        (click)="openKomoot(r.komootUrl)"
       >
         <img src="/komoot.svg" alt="" class="brand-icon" />
         Komoot öffnen
@@ -89,7 +89,7 @@
 
       <button
         class="action-button gpx-button"
-        [disabled]="!r.gpx_path"
+        [disabled]="!r.gpxId"
         (click)="downloadGpx(r)"
       >
         GPX herunterladen

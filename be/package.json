@@ -5,6 +5,7 @@
   "scripts": {
     "migrate:documents": "node migrations/migrate-documents.mjs",
     "migrate:supabase": "tsx migrations/migrate-to-supabase.ts",
+    "migrate:appwrite": "tsx migrations/migrate-appwrite-to-self-hosted.ts",
     "migrate:supabase:typecheck": "tsc --noEmit"
   },
   "dependencies": {

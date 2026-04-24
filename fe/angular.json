@@ -22,7 +22,8 @@
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": [
               "leaflet",
-              "leaflet-polylinedecorator"
+              "leaflet-polylinedecorator",
+              "json-bigint"
             ],
             "assets": [
               {

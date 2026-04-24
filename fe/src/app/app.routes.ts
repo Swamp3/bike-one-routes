@@ -16,7 +16,7 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'routes/:shortId',
+    path: 'routes/:id',
     loadComponent: () =>
       import('./components/route-detail/route-detail.component').then(
         (m) => m.RouteDetailComponent

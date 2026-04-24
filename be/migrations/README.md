@@ -1,5 +1,51 @@
 # Cloud → self-hosted migration
 
+## `migrate-appwrite-to-self-hosted.ts`
+
+Full Appwrite → Appwrite migration (Cloud → self-hosted). Copies:
+
+- **Databases**
+  - Collections (created on target if missing; preserves `$id`)
+    - Attributes (string/int/float/boolean/datetime/email/enum/ip/url/relationship)
+    - Indexes
+    - Documents (preserves `$id` and permissions)
+- **Storage**
+  - Buckets (preserves `$id`, permissions, size limits, compression, encryption, antivirus)
+  - Files (preserves `$id`, name, permissions, mimeType)
+
+Idempotent: re-runs skip resources that already exist on the target.
+
+### Configuration
+
+Open [migrate-appwrite-to-self-hosted.ts](migrate-appwrite-to-self-hosted.ts) and fill in the `CONFIG` block, or export these env vars (env wins):
+
+| Variable | Description |
+| -------- | ----------- |
+| `SOURCE_ENDPOINT` | e.g. `https://fra.cloud.appwrite.io/v1` |
+| `SOURCE_PROJECT_ID` | Cloud project ID |
+| `SOURCE_API_KEY` | Cloud API key: `databases.read`, `collections.read`, `attributes.read`, `indexes.read`, `documents.read`, `buckets.read`, `files.read` |
+| `TARGET_ENDPOINT` | e.g. `http://appwrite.melmo.eu/v1` |
+| `TARGET_PROJECT_ID` | Self-hosted project ID |
+| `TARGET_API_KEY` | Self-hosted API key: `databases.write`, `collections.write`, `attributes.write`, `indexes.write`, `documents.write`, `buckets.write`, `files.write` (+ matching `.read` scopes) |
+
+Optional config fields (in-file only):
+
+- `onlyDatabaseIds: string[]` — limit to specific DBs
+- `onlyBucketIds: string[]` — limit to specific buckets
+- `skipStorage: boolean` — skip bucket/file migration
+
+### Run
+
+```bash
+pnpm run migrate:appwrite
+# or directly:
+./migrations/migrate-appwrite-to-self-hosted.ts
+```
+
+Note: the target project at `TARGET_PROJECT_ID` must already exist on the self-hosted instance (create it in the console once). Everything inside the project — DBs, collections, schema, buckets, files — will be created by the script if missing.
+
+---
+
 ## `migrate-documents.mjs`
 
 Copies **database documents** from a source Appwrite project (e.g. Cloud) to a target (self-hosted). Run from `be/` after `pnpm install`.

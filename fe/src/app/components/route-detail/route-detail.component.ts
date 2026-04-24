@@ -9,11 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import {
-  Route,
-  getPublicUrl,
-  getRouteByShortId,
-} from '../../../lib/supabase';
+import { Route, getGpxUrl, getRouteByShortId } from '../../../lib/appwrite';
 
 type LatLng = [number, number];
 
@@ -34,7 +30,7 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
   readonly notFound = signal(false);
   readonly error = signal<string | null>(null);
   readonly mapError = signal<string | null>(null);
-  shortId: number | null = null;
+  routeId: string | null = null;
 
   private mapContainer: HTMLDivElement | null = null;
   private map: import('leaflet').Map | null = null;
@@ -44,15 +40,14 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe((params) => {
-      const raw = params.get('shortId');
-      const parsed = raw === null ? NaN : Number(raw);
-      if (!Number.isFinite(parsed) || !Number.isInteger(parsed)) {
+      const raw = params.get('id');
+      if (!raw) {
         this.notFound.set(true);
         this.loading.set(false);
         return;
       }
-      this.shortId = parsed;
-      this.loadRoute(parsed);
+      this.routeId = raw;
+      this.loadRoute(parseInt(raw));
     });
   }
 
@@ -99,8 +94,8 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
   }
 
   retry() {
-    if (this.shortId !== null) {
-      this.loadRoute(this.shortId);
+    if (this.routeId !== null) {
+      this.loadRoute(parseInt(this.routeId));
     }
   }
 
@@ -122,25 +117,25 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
     return `${minutes}min`;
   }
 
-  openStrava(stravaUrl: string | null): void {
+  openStrava(stravaUrl: string | null | undefined): void {
     if (stravaUrl) {
       window.open(stravaUrl, '_blank', 'noopener,noreferrer');
     }
   }
 
-  openKomoot(komootUrl: string | null): void {
+  openKomoot(komootUrl: string | null | undefined): void {
     if (komootUrl) {
       window.open(komootUrl, '_blank', 'noopener,noreferrer');
     }
   }
 
   async downloadGpx(route: Route): Promise<void> {
-    if (!route.gpx_path) {
+    const gpxUrl = getGpxUrl(route);
+    if (!gpxUrl) {
       this.error.set('Keine GPX-Datei verfügbar.');
       return;
     }
     try {
-      const gpxUrl = getPublicUrl(route.gpx_path);
       const response = await fetch(gpxUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -195,13 +190,13 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      if (!route.gpx_path) {
+      const gpxUrl = getGpxUrl(route);
+      if (!gpxUrl) {
         map.setView([51.1657, 10.4515], 6);
         this.mapError.set('Keine GPX-Datei für diese Route verfügbar.');
         return;
       }
 
-      const gpxUrl = getPublicUrl(route.gpx_path);
       const response = await fetch(gpxUrl);
       if (!response.ok) {
         throw new Error(`GPX request failed: ${response.status}`);

@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Route, getPublicUrl, getRoutes } from '../../../lib/supabase';
+import {
+  Route,
+  getGpxUrl,
+  getImageUrl,
+  getRoutes,
+} from '../../../lib/appwrite';
 
 @Component({
   selector: 'app-routes',
@@ -33,10 +38,11 @@ export class RoutesComponent implements OnInit {
 
   getRouteImageUrl(route: Route): string {
     try {
-      if (!route.image_path) {
+      const url = getImageUrl(route);
+      if (!url) {
         return 'https://via.placeholder.com/400x200?text=Image+Not+Available';
       }
-      return getPublicUrl(route.image_path);
+      return url;
     } catch (error) {
       console.error('Error loading image for route:', route.title, error);
       return 'https://via.placeholder.com/400x200?text=Image+Not+Available';
@@ -61,25 +67,25 @@ export class RoutesComponent implements OnInit {
     return `${minutes}min`;
   }
 
-  openStrava(stravaUrl: string | null): void {
+  openStrava(stravaUrl: string | null | undefined): void {
     if (stravaUrl) {
       window.open(stravaUrl, '_blank', 'noopener,noreferrer');
     }
   }
 
-  openKomoot(komootUrl: string | null): void {
+  openKomoot(komootUrl: string | null | undefined): void {
     if (komootUrl) {
       window.open(komootUrl, '_blank', 'noopener,noreferrer');
     }
   }
 
   async downloadGpx(route: Route): Promise<void> {
-    if (!route.gpx_path) {
+    const gpxUrl = getGpxUrl(route);
+    if (!gpxUrl) {
       this.error = 'No GPX file available for this route.';
       return;
     }
     try {
-      const gpxUrl = getPublicUrl(route.gpx_path);
       const response = await fetch(gpxUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);

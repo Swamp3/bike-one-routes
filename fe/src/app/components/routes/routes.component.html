@@ -23,10 +23,10 @@
   </div>
   } @if (!loading() && !error) {
   <div class="routes-grid">
-    @for (route of routes; track route.id) {
+    @for (route of routes; track route.$id) {
     <article class="route-card">
       <a
-        [routerLink]="['/routes', route.short_id]"
+        [routerLink]="['/routes', route.shortId]"
         class="route-card-link"
         [attr.aria-label]="'Details zu ' + route.title + ' anzeigen'"
       >
@@ -62,7 +62,7 @@
             <div class="stat">
               <span class="stat-icon">⏱️</span>
               <span class="stat-value">{{
-                formatTime(route.estimated_time)
+                formatTime(route.estimatedTime)
               }}</span>
               <span class="stat-label">Zeit</span>
             </div>
@@ -74,7 +74,7 @@
         <button
           [attr.aria-label]="'Route in Strava öffnen'"
           class="action-button strava-button"
-          (click)="openStrava(route.strava_url)"
+          (click)="openStrava(route.stravaUrl)"
         >
           <img src="/strava.svg" alt="Strava" class="strava-icon" />
         </button>
@@ -82,7 +82,7 @@
         <button
           [attr.aria-label]="'Route in Komoot öffnen'"
           class="action-button komoot-button"
-          (click)="openKomoot(route.komoot_url)"
+          (click)="openKomoot(route.komootUrl)"
         >
           <img src="/komoot.svg" alt="Komoot" class="komoot-icon" />
         </button>
