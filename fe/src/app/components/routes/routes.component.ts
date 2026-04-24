@@ -1,11 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import {
-  Route,
-  getGpxFileUrl,
-  getImageUrl,
-  getRoutes,
-} from '../../../lib/appwrite';
+import { Route, getPublicUrl, getRoutes } from '../../../lib/supabase';
 
 @Component({
   selector: 'app-routes',
@@ -27,7 +22,7 @@ export class RoutesComponent implements OnInit {
     try {
       this.loading.set(true);
       this.routes = await getRoutes();
-      console.log('Loaded routes:', this.routes); // Debug log
+      console.log('Loaded routes:', this.routes);
     } catch (error) {
       this.error = 'Failed to load routes. Please try again later.';
       console.error('Error loading routes:', error);
@@ -38,7 +33,10 @@ export class RoutesComponent implements OnInit {
 
   getRouteImageUrl(route: Route): string {
     try {
-      return getImageUrl(route.storageBucket, route.mapThumbnailId);
+      if (!route.image_path) {
+        return 'https://via.placeholder.com/400x200?text=Image+Not+Available';
+      }
+      return getPublicUrl(route.image_path);
     } catch (error) {
       console.error('Error loading image for route:', route.title, error);
       return 'https://via.placeholder.com/400x200?text=Image+Not+Available';
@@ -54,7 +52,7 @@ export class RoutesComponent implements OnInit {
   }
 
   formatTime(timeInMilliseconds: number): string {
-    const timeInMinutes = Math.round(timeInMilliseconds / 60000); // Convert from milliseconds to minutes
+    const timeInMinutes = Math.round(timeInMilliseconds / 60000);
     const hours = Math.floor(timeInMinutes / 60);
     const minutes = timeInMinutes % 60;
     if (hours > 0) {
@@ -63,21 +61,25 @@ export class RoutesComponent implements OnInit {
     return `${minutes}min`;
   }
 
-  openStrava(stravaUrl: string): void {
+  openStrava(stravaUrl: string | null): void {
     if (stravaUrl) {
       window.open(stravaUrl, '_blank', 'noopener,noreferrer');
     }
   }
 
-  openKomoot(komootUrl: string): void {
+  openKomoot(komootUrl: string | null): void {
     if (komootUrl) {
       window.open(komootUrl, '_blank', 'noopener,noreferrer');
     }
   }
 
   async downloadGpx(route: Route): Promise<void> {
+    if (!route.gpx_path) {
+      this.error = 'No GPX file available for this route.';
+      return;
+    }
     try {
-      const gpxUrl = await getGpxFileUrl(route.storageBucket, route.gpxId);
+      const gpxUrl = getPublicUrl(route.gpx_path);
       const response = await fetch(gpxUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);

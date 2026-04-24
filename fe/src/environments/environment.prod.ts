@@ -4,10 +4,10 @@ export const environment = {
   production: true,
   name: 'production',
   version: pack.version,
-  appwrite: {
-    endpoint: 'https://appwrite.melmo.eu/v1',
-    projectId: '6854f24a0028bb2189b6',
-    databaseId: '6854f4e1002a5444cd36',
-    routesCollectionId: '6854f508002dfc11534b',
+  supabase: {
+    url: 'https://supabase.melmo.eu',
+    anonKey:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc2OTczNzMwLCJleHAiOjE5MzQ2NTM3MzB9.Ty2AKwWXXw0kU4IhNoxdL3wdppdcU-L-6h1NCS7yctQ',
+    bucket: 'routes',
   },
 };

@@ -43,3 +43,46 @@ This script does **not** copy Storage files. After documents exist on the target
 
 - Re-upload files to the target bucket and update document attributes, or  
 - Extend the script to download with `node-appwrite` `Storage` from source and upload to target (preserve `fileId` only if the target API allows).
+
+---
+
+## `migrate-to-supabase.ts`
+
+Copies **route documents and their storage files** from Appwrite to Supabase. For each Appwrite document it downloads the thumbnail image and GPX file, uploads them to the Supabase `routes` bucket under `images/<uuid>.<ext>` and `gpx/<uuid>.gpx`, then inserts a row into `public.routes`.
+
+Idempotent: skips documents whose `title` already exists in `public.routes`.
+
+### Prereqs
+
+Run [be/supabase/schema.sql](../supabase/schema.sql) against the target Supabase project once (via Studio SQL editor or psql).
+
+### Configuration
+
+Open [migrate-to-supabase.ts](migrate-to-supabase.ts) and fill in the `CONFIG` object at the top of the file:
+
+```ts
+const CONFIG = {
+  appwrite: {
+    endpoint: 'https://fra.cloud.appwrite.io/v1',
+    projectId: '6854f24a0028bb2189b6',
+    apiKey: '<APPWRITE_API_KEY>',
+    databaseId: '6854f4e1002a5444cd36',
+    collectionId: '6854f508002dfc11534b',
+  },
+  supabase: {
+    url: 'https://supabase.melmo.eu',
+    serviceRoleKey: '<SUPABASE_SERVICE_ROLE_KEY>',
+    bucket: 'routes',
+  },
+};
+```
+
+Values from the environment (`APPWRITE_ENDPOINT`, `APPWRITE_PROJECT_ID`, `APPWRITE_API_KEY`, `APPWRITE_DATABASE_ID`, `APPWRITE_COLLECTION_ID`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_BUCKET`) override the in-file values when set, so you can keep secrets out of the file if you prefer.
+
+### Run
+
+```bash
+pnpm run migrate:supabase
+# or directly:
+./migrations/migrate-to-supabase.ts
+```

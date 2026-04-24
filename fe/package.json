@@ -20,7 +20,7 @@
     "@angular/router": "^20.0.0",
     "@angular/ssr": "^20.0.3",
     "@fontsource/nunito": "^5.2.6",
-    "appwrite": "^18.1.1",
+    "@supabase/supabase-js": "^2.104.1",
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
