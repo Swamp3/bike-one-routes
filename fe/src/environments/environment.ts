@@ -7,8 +7,10 @@ export const environment = {
   production: false,
   name: 'development',
   version: pack.version,
-  appwrite: {
-    endpoint: 'https://fra.cloud.appwrite.io/v1',
-    projectId: '6854f24a0028bb2189b6',
+  supabase: {
+    url: 'https://supabase.melmo.eu',
+    anonKey:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc2OTczNzMwLCJleHAiOjE5MzQ2NTM3MzB9.Ty2AKwWXXw0kU4IhNoxdL3wdppdcU-L-6h1NCS7yctQ',
+    bucket: 'routes',
   },
 };

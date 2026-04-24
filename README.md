@@ -2,98 +2,66 @@
 
 A modern web application for managing and displaying cycling routes for "Bike One Feierabendrunden" (after-work bike rides). The application helps cycling groups organize their routes, with random route selection to keep rides exciting and varied.
 
+## Repository layout
+
+| Directory | Purpose |
+| --------- | ------- |
+| [`fe/`](fe/) | **Frontend**: Angular 20 app, `package.json`, SSR, Appwrite **client** SDK. Run all UI commands from here. |
+| [`be/`](be/) | **Backend / ops**: Appwrite self-host notes, Caddy hints, schema checklist, Cloud → self-hosted **migration** scripts (Node + `node-appwrite`). |
+
 ## Features
 
-- 🚴‍♂️ **Route Gallery**: Display cycling routes with thumbnails, distances, and elevation data
-- 🎲 **Random Selection**: Routes are randomly selected on-site to add excitement
-- 📍 **Strava Integration**: Direct links to routes on Strava for detailed navigation
-- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
-- ⚡ **Server-Side Rendering**: Fast loading with Angular SSR
-- 🎨 **Modern UI**: Clean, intuitive interface with loading states and error handling
-
-## Tech Stack
-
-- **Frontend**: Angular 20 with standalone components
-- **Backend**: Appwrite (Database, Storage, Authentication)
-- **Styling**: SCSS with modern CSS features
-- **Build Tool**: Angular CLI with SSR support
-- **Package Manager**: pnpm
+- **Route Gallery**: Display cycling routes with thumbnails, distances, and elevation data
+- **Random Selection**: Routes are randomly selected on-site to add excitement
+- **Strava / Komoot**: Direct links for detailed navigation
+- **Responsive Design**: Works on desktop and mobile
+- **Server-Side Rendering**: Angular SSR
 - **Typography**: Nunito font family
 
-## Getting Started
+## Tech stack
+
+- **Frontend** (`fe/`): Angular 20, standalone components, Appwrite Web SDK
+- **Data**: Appwrite (database + storage); instance is **self-hosted** (see `be/README.md`)
+- **Package manager**: pnpm
+
+## Getting started
 
 ### Prerequisites
 
-- Node.js (latest LTS version)
-- pnpm package manager
-- Appwrite instance (cloud or self-hosted)
+- Node.js (LTS)
+- pnpm
+- Self-hosted Appwrite (or temporary Cloud project) and IDs filled in `fe/src/environments/environment.ts`
 
-### Installation
-
-1. Clone the repository:
+### Frontend
 
 ```bash
-git clone <repository-url>
-cd bike-one-routes
-```
-
-2. Install dependencies:
-
-```bash
+cd fe
 pnpm install
-```
-
-3. Configure environment variables:
-   - Copy environment files and update Appwrite configuration
-   - Set up your Appwrite project ID and endpoint
-
-### Development
-
-Start the development server:
-
-```bash
 pnpm start
 ```
 
-The application will be available at `http://localhost:4200/`
+Open `http://localhost:4200/`.
 
-### Building
+Set `REPLACE_WITH_*` values in [`fe/src/environments/environment.ts`](fe/src/environments/environment.ts) (and `environment.prod.ts` for production builds) to your Appwrite **project**, **database**, and **routes collection** IDs. API endpoint defaults to `https://appwrite.melmo.eu/v1`; change it if your hostname differs.
 
-Build for production:
+### Build & SSR
 
 ```bash
+cd fe
 pnpm run build
+pnpm run serve:ssr:bike-one-routes
 ```
 
-### Testing
-
-Run unit tests:
+### Tests
 
 ```bash
+cd fe
 pnpm test
 ```
 
-## Project Structure
+### Backend / migration
 
-```
-src/
-├── app/
-│   ├── components/
-│   │   └── routes/          # Main routes display component
-│   ├── app.config.ts        # Application configuration
-│   └── app.routes.ts        # Route definitions
-├── lib/
-│   └── appwrite.ts          # Appwrite client and API functions
-└── environments/            # Environment configurations
-```
-
-## Configuration
-
-The application requires Appwrite configuration in the environment files:
-
-- Database for storing route information
-- Storage for route thumbnails and images
-- Proper collection structure for route data
+See [`be/README.md`](be/README.md) and [`be/migrations/README.md`](be/migrations/README.md).
 
 ## Contributing
 

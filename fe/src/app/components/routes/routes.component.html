@@ -1,0 +1,98 @@
+<div class="routes-container">
+  <header class="page-header">
+    <h1 class="page-title">Bike One Feierabendrunden</h1>
+    <p class="page-subtitle">
+      Welche Runde gefahren wird, entscheiden wir vor Ort.
+    </p>
+  </header>
+
+  @if (loading()) {
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Lade Routen...</p>
+  </div>
+  } @if (error) {
+  <div class="error-container">
+    <div class="error-message">
+      <h3>Fehler beim Laden</h3>
+      <p>{{ error }}</p>
+      <button (click)="loadRoutes()" class="retry-button">
+        Erneut versuchen
+      </button>
+    </div>
+  </div>
+  } @if (!loading() && !error) {
+  <div class="routes-grid">
+    @for (route of routes; track route.id) {
+    <article class="route-card">
+      <a
+        [routerLink]="['/routes', route.short_id]"
+        class="route-card-link"
+        [attr.aria-label]="'Details zu ' + route.title + ' anzeigen'"
+      >
+        <div class="route-image-container">
+          <img
+            [src]="getRouteImageUrl(route)"
+            [alt]="route.title"
+            class="route-image"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="route-content">
+          <h3 class="route-title">{{ route.title }}</h3>
+
+          <div class="route-stats">
+            <div class="stat">
+              <span class="stat-icon">🚴</span>
+              <span class="stat-value">{{
+                formatDistance(route.distance)
+              }}</span>
+              <span class="stat-label">Distanz</span>
+            </div>
+
+            <div class="stat">
+              <span class="stat-icon">⛰️</span>
+              <span class="stat-value">{{
+                formatElevation(route.elevation)
+              }}</span>
+              <span class="stat-label">Höhenmeter</span>
+            </div>
+
+            <div class="stat">
+              <span class="stat-icon">⏱️</span>
+              <span class="stat-value">{{
+                formatTime(route.estimated_time)
+              }}</span>
+              <span class="stat-label">Zeit</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <div class="route-actions">
+        <button
+          [attr.aria-label]="'Route in Strava öffnen'"
+          class="action-button strava-button"
+          (click)="openStrava(route.strava_url)"
+        >
+          <img src="/strava.svg" alt="Strava" class="strava-icon" />
+        </button>
+
+        <button
+          [attr.aria-label]="'Route in Komoot öffnen'"
+          class="action-button komoot-button"
+          (click)="openKomoot(route.komoot_url)"
+        >
+          <img src="/komoot.svg" alt="Komoot" class="komoot-icon" />
+        </button>
+
+        <button class="action-button gpx-button" (click)="downloadGpx(route)">
+          GPX
+        </button>
+      </div>
+    </article>
+    }
+  </div>
+  }
+</div>
