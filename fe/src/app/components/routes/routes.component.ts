@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Route, getPublicUrl, getRoutes } from '../../../lib/supabase';
 
 @Component({
   selector: 'app-routes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './routes.component.html',
   styleUrls: ['./routes.component.scss'],
 })

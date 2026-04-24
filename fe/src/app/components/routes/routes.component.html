@@ -25,79 +25,71 @@
   <div class="routes-grid">
     @for (route of routes; track route.id) {
     <article class="route-card">
-      <div class="route-image-container">
-        <img
-          [src]="getRouteImageUrl(route)"
-          [alt]="route.title"
-          class="route-image"
-          loading="lazy"
-        />
-        <!-- <div class="route-overlay">
-          <a
-            [href]="route.strava_url"
-            target="_blank"
-            rel="noopener"
-            class="strava-link"
-            #stravaLink
-          >
-            <svg class="strava-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.172"
-              />
-            </svg>
-            Strava öffnen
-          </a>
-        </div> -->
-      </div>
-
-      <div class="route-content">
-        <h3 class="route-title">{{ route.title }}</h3>
-
-        <div class="route-stats">
-          <div class="stat">
-            <span class="stat-icon">🚴</span>
-            <span class="stat-value">{{ formatDistance(route.distance) }}</span>
-            <span class="stat-label">Distanz</span>
-          </div>
-
-          <div class="stat">
-            <span class="stat-icon">⛰️</span>
-            <span class="stat-value">{{
-              formatElevation(route.elevation)
-            }}</span>
-            <span class="stat-label">Höhenmeter</span>
-          </div>
-
-          <div class="stat">
-            <span class="stat-icon">⏱️</span>
-            <span class="stat-value">{{
-              formatTime(route.estimated_time)
-            }}</span>
-            <span class="stat-label">Zeit</span>
-          </div>
+      <a
+        [routerLink]="['/routes', route.short_id]"
+        class="route-card-link"
+        [attr.aria-label]="'Details zu ' + route.title + ' anzeigen'"
+      >
+        <div class="route-image-container">
+          <img
+            [src]="getRouteImageUrl(route)"
+            [alt]="route.title"
+            class="route-image"
+            loading="lazy"
+          />
         </div>
 
-        <div class="route-actions">
-          <button
-            [attr.aria-label]="'Route in Strava öffnen'"
-            class="action-button strava-button"
-            (click)="openStrava(route.strava_url)"
-          >
-            <img src="/strava.svg" alt="Strava" class="strava-icon" />
-          </button>
+        <div class="route-content">
+          <h3 class="route-title">{{ route.title }}</h3>
 
-          <button
-            [attr.aria-label]="'Route in Komoot öffnen'"
-            class="action-button komoot-button"
-            (click)="openKomoot(route.komoot_url)"
-          >
-            <img src="/komoot.svg" alt="Komoot" class="komoot-icon" />
-          </button>
+          <div class="route-stats">
+            <div class="stat">
+              <span class="stat-icon">🚴</span>
+              <span class="stat-value">{{
+                formatDistance(route.distance)
+              }}</span>
+              <span class="stat-label">Distanz</span>
+            </div>
 
-          <button class="action-button gpx-button" (click)="downloadGpx(route)">
-            GPX
-          </button>
+            <div class="stat">
+              <span class="stat-icon">⛰️</span>
+              <span class="stat-value">{{
+                formatElevation(route.elevation)
+              }}</span>
+              <span class="stat-label">Höhenmeter</span>
+            </div>
+
+            <div class="stat">
+              <span class="stat-icon">⏱️</span>
+              <span class="stat-value">{{
+                formatTime(route.estimated_time)
+              }}</span>
+              <span class="stat-label">Zeit</span>
+            </div>
+          </div>
         </div>
+      </a>
+
+      <div class="route-actions">
+        <button
+          [attr.aria-label]="'Route in Strava öffnen'"
+          class="action-button strava-button"
+          (click)="openStrava(route.strava_url)"
+        >
+          <img src="/strava.svg" alt="Strava" class="strava-icon" />
+        </button>
+
+        <button
+          [attr.aria-label]="'Route in Komoot öffnen'"
+          class="action-button komoot-button"
+          (click)="openKomoot(route.komoot_url)"
+        >
+          <img src="/komoot.svg" alt="Komoot" class="komoot-icon" />
+        </button>
+
+        <button class="action-button gpx-button" (click)="downloadGpx(route)">
+          GPX
+        </button>
       </div>
     </article>
     }

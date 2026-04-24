@@ -15,4 +15,11 @@ export const routes: Routes = [
         (m) => m.RoutesComponent
       ),
   },
+  {
+    path: 'routes/:shortId',
+    loadComponent: () =>
+      import('./components/route-detail/route-detail.component').then(
+        (m) => m.RouteDetailComponent
+      ),
+  },
 ];

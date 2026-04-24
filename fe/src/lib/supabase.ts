@@ -11,6 +11,7 @@ export const supabase: SupabaseClient = createClient(
 
 export interface Route {
   id: string;
+  short_id: number;
   created_at: string;
   updated_at: string;
   title: string;
@@ -36,6 +37,25 @@ export async function getRoutes(): Promise<Route[]> {
     throw error;
   }
   return (data ?? []) as Route[];
+}
+
+/**
+ * Fetch a single route by its short_id.
+ * Returns null if no route with the given short_id exists.
+ */
+export async function getRouteByShortId(
+  shortId: number
+): Promise<Route | null> {
+  const { data, error } = await supabase
+    .from('routes')
+    .select('*')
+    .eq('short_id', shortId)
+    .maybeSingle();
+  if (error) {
+    console.error('Error fetching route by short_id:', error);
+    throw error;
+  }
+  return (data as Route | null) ?? null;
 }
 
 /**

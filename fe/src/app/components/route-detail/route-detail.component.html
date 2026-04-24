@@ -1,0 +1,101 @@
+<div class="detail-container">
+  <nav class="detail-nav">
+    <a routerLink="/routes" class="back-link" aria-label="Zurück zur Übersicht">
+      ← Zurück zur Übersicht
+    </a>
+  </nav>
+
+  @if (loading()) {
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Lade Route...</p>
+  </div>
+  } @else if (notFound()) {
+  <div class="error-container">
+    <div class="error-message">
+      <h3>Route nicht gefunden</h3>
+      <p>Diese Route existiert nicht oder wurde entfernt.</p>
+      <a routerLink="/routes" class="retry-button">Zur Übersicht</a>
+    </div>
+  </div>
+  } @else if (error()) {
+  <div class="error-container">
+    <div class="error-message">
+      <h3>Fehler beim Laden</h3>
+      <p>{{ error() }}</p>
+      <button (click)="retry()" class="retry-button">Erneut versuchen</button>
+    </div>
+  </div>
+  } @else { @if (route(); as r) {
+  <article class="route-detail">
+    <div class="hero">
+      <img
+        [src]="getRouteImageUrl(r)"
+        [alt]="r.title"
+        class="hero-image"
+      />
+    </div>
+
+    <header class="detail-header">
+      <h1 class="detail-title">{{ r.title }}</h1>
+      <button
+        type="button"
+        class="share-button"
+        (click)="copyShareLink()"
+        aria-label="Link kopieren"
+        title="Link kopieren"
+      >
+        Link kopieren
+      </button>
+    </header>
+
+    <section class="detail-stats">
+      <div class="stat">
+        <span class="stat-icon">🚴</span>
+        <span class="stat-value">{{ formatDistance(r.distance) }}</span>
+        <span class="stat-label">Distanz</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">⛰️</span>
+        <span class="stat-value">{{ formatElevation(r.elevation) }}</span>
+        <span class="stat-label">Höhenmeter</span>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">⏱️</span>
+        <span class="stat-value">{{ formatTime(r.estimated_time) }}</span>
+        <span class="stat-label">Zeit</span>
+      </div>
+    </section>
+
+    <section class="detail-actions">
+      <button
+        [attr.aria-label]="'Route in Strava öffnen'"
+        class="action-button strava-button"
+        [disabled]="!r.strava_url"
+        (click)="openStrava(r.strava_url)"
+      >
+        <img src="/strava.svg" alt="" class="brand-icon" />
+        Strava öffnen
+      </button>
+
+      <button
+        [attr.aria-label]="'Route in Komoot öffnen'"
+        class="action-button komoot-button"
+        [disabled]="!r.komoot_url"
+        (click)="openKomoot(r.komoot_url)"
+      >
+        <img src="/komoot.svg" alt="" class="brand-icon" />
+        Komoot öffnen
+      </button>
+
+      <button
+        class="action-button gpx-button"
+        [disabled]="!r.gpx_path"
+        (click)="downloadGpx(r)"
+      >
+        GPX herunterladen
+      </button>
+    </section>
+  </article>
+  } }
+</div>
