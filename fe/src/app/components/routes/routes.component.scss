@@ -214,6 +214,7 @@ $overlay-dark: rgba(0, 0, 0, 0.7);
 }
 
 .route-content {
+  position: relative;
   padding: 1.5rem;
 
   .route-title {
@@ -267,6 +268,15 @@ $overlay-dark: rgba(0, 0, 0, 0.7);
       }
     }
   }
+}
+
+.route-updated {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  margin: 0;
+  font-size: 0.7rem;
+  color: $gray-medium;
 }
 
 .route-actions {

@@ -221,6 +221,12 @@ $shadow-medium: rgba(0, 0, 0, 0.15);
   }
 }
 
+.detail-updated {
+  margin: 1rem 2rem 0;
+  font-size: 0.8rem;
+  color: $gray-medium;
+}
+
 .detail-actions {
   display: flex;
   flex-wrap: wrap;

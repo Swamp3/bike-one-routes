@@ -13,6 +13,14 @@ export function formatTime(timeInMilliseconds: number): string {
   return hours > 0 ? `${hours}h ${minutes}min` : `${minutes}min`;
 }
 
+export function formatDate(isoDate: string): string {
+  return new Date(isoDate).toLocaleDateString('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
+
 export function gpxFileName(title: string): string {
   return `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.gpx`;
 }

@@ -12,6 +12,7 @@ import {
   getImageUrl,
 } from '../../../lib/appwrite';
 import {
+  formatDate,
   formatDistance,
   formatElevation,
   formatTime,
@@ -32,6 +33,7 @@ export class RoutesComponent implements OnInit {
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
 
+  readonly formatDate = formatDate;
   readonly formatDistance = formatDistance;
   readonly formatElevation = formatElevation;
   readonly formatTime = formatTime;

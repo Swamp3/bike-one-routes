@@ -14,6 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Route, getGpxUrl, getRouteByShortId } from '../../../lib/appwrite';
 import {
+  formatDate,
   formatDistance,
   formatElevation,
   formatTime,
@@ -41,6 +42,7 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
   readonly error = signal<string | null>(null);
   readonly mapError = signal<string | null>(null);
 
+  readonly formatDate = formatDate;
   readonly formatDistance = formatDistance;
   readonly formatElevation = formatElevation;
   readonly formatTime = formatTime;

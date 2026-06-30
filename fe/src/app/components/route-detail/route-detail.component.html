@@ -29,7 +29,12 @@
   } @else { @if (route(); as r) {
   <article class="route-detail">
     <div class="hero">
-      <div #mapEl class="hero-map" role="img" [attr.aria-label]="'Karte mit GPX-Track für ' + r.title"></div>
+      <div
+        #mapEl
+        class="hero-map"
+        role="img"
+        [attr.aria-label]="'Karte mit GPX-Track für ' + r.title"
+      ></div>
       @if (mapError(); as me) {
       <div class="map-error">{{ me }}</div>
       }
@@ -66,6 +71,8 @@
       </div>
     </section>
 
+    <p class="detail-updated">Aktualisiert: {{ formatDate(r.$updatedAt) }}</p>
+
     <section class="detail-actions">
       @if (r.stravaUrl) {
       <a
@@ -83,9 +90,7 @@
         <img src="/strava.svg" alt="" class="brand-icon" />
         Strava öffnen
       </button>
-      }
-
-      @if (r.komootUrl) {
+      } @if (r.komootUrl) {
       <a
         [href]="r.komootUrl"
         target="_blank"

@@ -67,6 +67,10 @@
               <span class="stat-label">Zeit</span>
             </div>
           </div>
+
+          <div class="route-updated">
+            {{ formatDate(route.$updatedAt) }}
+          </div>
         </div>
       </a>
 
@@ -81,9 +85,7 @@
         >
           <img src="/strava.svg" alt="Strava" class="strava-icon" />
         </a>
-        }
-
-        @if (route.komootUrl) {
+        } @if (route.komootUrl) {
         <a
           [href]="route.komootUrl"
           target="_blank"
@@ -95,7 +97,11 @@
         </a>
         }
 
-        <button type="button" class="action-button gpx-button" (click)="downloadGpx(route)">
+        <button
+          type="button"
+          class="action-button gpx-button"
+          (click)="downloadGpx(route)"
+        >
           GPX
         </button>
       </div>
