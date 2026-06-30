@@ -30,14 +30,14 @@ function bucketOf(route: Route): string {
   return route.storageBucket || environment.appwriteDefaultBucketId;
 }
 
-/** Fetch all active routes, oldest first. */
+/** Fetch all active routes, ordered by shortId. */
 export async function getActiveRoutes(): Promise<Route[]> {
   const res = await tablesDB.listRows<Route>({
     databaseId: environment.appwriteDatabaseId,
     tableId: environment.appwriteRoutesTableId,
     queries: [
       Query.equal('active', true),
-      Query.orderAsc('$createdAt'),
+      Query.orderAsc('shortId'),
       Query.limit(100),
     ],
   });
