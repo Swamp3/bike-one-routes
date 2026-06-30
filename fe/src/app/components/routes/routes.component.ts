@@ -5,7 +5,12 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Route, getGpxUrl, getImageUrl, getRoutes } from '../../../lib/appwrite';
+import {
+  Route,
+  getActiveRoutes,
+  getGpxUrl,
+  getImageUrl,
+} from '../../../lib/appwrite';
 import {
   formatDistance,
   formatElevation,
@@ -39,7 +44,7 @@ export class RoutesComponent implements OnInit {
     try {
       this.loading.set(true);
       this.error.set(null);
-      this.routes.set(await getRoutes());
+      this.routes.set(await getActiveRoutes());
     } catch (err) {
       this.error.set('Failed to load routes. Please try again later.');
       console.error('Error loading routes:', err);

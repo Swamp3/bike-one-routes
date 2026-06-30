@@ -23,18 +23,23 @@ export interface Route extends Models.Row {
   /** File ID for the GPX track inside `storageBucket`. */
   gpxId?: string | null;
   shortId: number;
+  active: boolean;
 }
 
 function bucketOf(route: Route): string {
   return route.storageBucket || environment.appwriteDefaultBucketId;
 }
 
-/** Fetch all routes, oldest first. */
-export async function getRoutes(): Promise<Route[]> {
+/** Fetch all active routes, oldest first. */
+export async function getActiveRoutes(): Promise<Route[]> {
   const res = await tablesDB.listRows<Route>({
     databaseId: environment.appwriteDatabaseId,
     tableId: environment.appwriteRoutesTableId,
-    queries: [Query.orderAsc('$createdAt'), Query.limit(100)],
+    queries: [
+      Query.equal('active', true),
+      Query.orderAsc('$createdAt'),
+      Query.limit(100),
+    ],
   });
   return res.rows;
 }
