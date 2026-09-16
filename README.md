@@ -8,6 +8,7 @@ A modern web application for managing and displaying cycling routes for "Bike On
 | --------- | ------- |
 | [`fe/`](fe/) | **Frontend**: Angular 20 app, `package.json`, SSR, Appwrite **client** SDK. Run all UI commands from here. |
 | [`be/`](be/) | **Backend / ops**: Self-hosted Appwrite `docker-compose.yml` + `.env` running on the server. |
+| [`tools/thumbnails/`](tools/thumbnails/) | **Ops script**: Renders each route's GPX track (headless Leaflet) and updates its Appwrite thumbnail. Appwrite **server** SDK. |
 
 ## Features
 
