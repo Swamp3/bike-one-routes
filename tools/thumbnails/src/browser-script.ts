@@ -141,14 +141,12 @@ window.drawRoute = function (points) {
       if (settled) return;
       settled = true;
       // 'load' only means the tile images have finished downloading/decoding;
-      // wait a couple of paint frames so the browser has actually composited
-      // them before Puppeteer takes the screenshot, or the capture can still
-      // show tiles mid-load.
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() =>
-          resolve({ timedOut: timedOut, tileErrorCount: tileErrorCount })
-        );
-      });
+      // wait an extra second so the browser has actually composited them
+      // before Puppeteer takes the screenshot, or the capture can still show
+      // tiles mid-load.
+      setTimeout(() => {
+        resolve({ timedOut: timedOut, tileErrorCount: tileErrorCount });
+      }, 1000);
     };
     if (tiles.isLoading()) {
       tiles.on('load', () => finish(false));
