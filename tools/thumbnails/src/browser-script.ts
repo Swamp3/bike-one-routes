@@ -126,13 +126,23 @@ window.drawRoute = function (points) {
     }
 
     let settled = false;
-    const finish = () => {
+    const finish = (timedOut) => {
       if (settled) return;
       settled = true;
-      resolve();
+      // 'load' only means the tile images have finished downloading/decoding;
+      // wait a couple of paint frames so the browser has actually composited
+      // them before Puppeteer takes the screenshot, or the capture can still
+      // show tiles mid-load.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => resolve({ timedOut: timedOut }));
+      });
     };
-    tiles.on('load', finish);
-    setTimeout(finish, 8000);
+    if (tiles.isLoading()) {
+      tiles.on('load', () => finish(false));
+    } else {
+      finish(false);
+    }
+    setTimeout(() => finish(true), 15000);
   });
 };
 `;

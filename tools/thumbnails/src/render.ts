@@ -27,10 +27,15 @@ export async function createRenderer(): Promise<Renderer> {
           throw new Error('GPX file contains no track points.');
         }
 
-        await page.evaluate(
+        const { timedOut } = await page.evaluate(
           (pts) => (window as any).drawRoute(pts),
           points
         );
+        if (timedOut) {
+          console.warn(
+            '  warning: map tiles had not finished loading after 15s; thumbnail may have blank/low-res tiles'
+          );
+        }
         const screenshot = await page.screenshot({ type: 'png' });
         return Buffer.from(screenshot);
       } finally {
