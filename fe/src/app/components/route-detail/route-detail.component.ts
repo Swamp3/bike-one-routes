@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { debounceTime, fromEvent } from 'rxjs';
 import { Route, getGpxUrl, getRouteByShortId } from '../../../lib/appwrite';
 import {
   formatDate,
@@ -72,6 +73,16 @@ export class RouteDetailComponent implements OnInit, OnDestroy {
         this.lastShortId = parsed;
         void this.loadRoute(parsed);
       });
+
+    if (this.isBrowser) {
+      // Leaflet caches its container size at render time and does not
+      // observe layout changes on its own, so the map tiles keep the
+      // stale size (leaving unfilled gaps) after the browser window is
+      // resized until we tell it to re-measure.
+      fromEvent(window, 'resize')
+        .pipe(debounceTime(150), takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => this.map?.invalidateSize());
+    }
   }
 
   ngOnDestroy() {
