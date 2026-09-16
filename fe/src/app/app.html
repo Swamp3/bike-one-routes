@@ -1,2 +1,35 @@
 <router-outlet></router-outlet>
-<span class="app-version">v{{ version }}</span>
+
+<button
+  type="button"
+  class="app-version"
+  (click)="openChangelog()"
+  aria-haspopup="dialog"
+>
+  v{{ version }}
+</button>
+
+@if (showChangelog()) {
+<div class="changelog-overlay" (click)="closeChangelog()">
+  <div
+    class="changelog-panel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Changelog"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="changelog-header">
+      <h2>Changelog</h2>
+      <button
+        type="button"
+        class="changelog-close"
+        (click)="closeChangelog()"
+        aria-label="Schließen"
+      >
+        &times;
+      </button>
+    </div>
+    <pre class="changelog-body">{{ changelogText() ?? 'Lädt…' }}</pre>
+  </div>
+</div>
+}
