@@ -52,6 +52,17 @@ window.drawRoute = function (points) {
       { maxZoom: 19 }
     ).addTo(map);
 
+    // 'load' fires once the tile queue is empty, but Leaflet counts a tile
+    // that errored (e.g. the public OSM server rate-limiting a batch run) as
+    // "settled" too - it stays permanently grey (the map container's own
+    // background, per leaflet.css) without ever failing the load event. Track
+    // errors separately so a genuinely broken tile fails the render instead
+    // of silently shipping a grey patch.
+    let tileErrorCount = 0;
+    tiles.on('tileerror', () => {
+      tileErrorCount++;
+    });
+
     const polyline = L.polyline(points, {
       color: '#fa4616',
       weight: 4,
@@ -134,7 +145,9 @@ window.drawRoute = function (points) {
       // them before Puppeteer takes the screenshot, or the capture can still
       // show tiles mid-load.
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => resolve({ timedOut: timedOut }));
+        requestAnimationFrame(() =>
+          resolve({ timedOut: timedOut, tileErrorCount: tileErrorCount })
+        );
       });
     };
     if (tiles.isLoading()) {
