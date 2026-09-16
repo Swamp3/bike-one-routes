@@ -14,6 +14,9 @@
 /node_modules
 /fe/node_modules
 /be/node_modules
+/tools/route-admin/node_modules
+/tools/route-admin/dist
+/tools/route-admin/output
 npm-debug.log
 yarn-error.log
 

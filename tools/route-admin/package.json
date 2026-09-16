@@ -1,0 +1,19 @@
+{
+  "name": "route-admin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "thumbnails": "tsx src/generate.ts",
+    "metadata": "tsx src/update-metadata.ts"
+  },
+  "dependencies": {
+    "node-appwrite": "^29.0.0",
+    "puppeteer": "^25.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.3",
+    "tsx": "^4.23.13",
+    "typescript": "~5.9.3"
+  }
+}
