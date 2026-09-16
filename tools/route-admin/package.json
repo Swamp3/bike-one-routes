@@ -1,10 +1,11 @@
 {
-  "name": "thumbnails",
+  "name": "route-admin",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "generate": "tsx src/generate.ts"
+    "thumbnails": "tsx src/generate.ts",
+    "metadata": "tsx src/update-metadata.ts"
   },
   "dependencies": {
     "node-appwrite": "^29.0.0",

@@ -9,7 +9,7 @@ function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
     throw new Error(
-      `Missing ${name}. Copy tools/thumbnails/.env.example to .env and fill it in.`
+      `Missing ${name}. Copy tools/route-admin/.env.example to .env and fill it in.`
     );
   }
   return value;
@@ -32,6 +32,10 @@ export const storage = new Storage(client);
 export interface RouteRow extends Models.Row {
   title: string;
   shortId: number;
+  distance: number;
+  elevation: number;
+  /** Milliseconds. */
+  estimatedTime: number;
   storageBucket?: string | null;
   mapThumbnailId?: string | null;
   gpxId?: string | null;
